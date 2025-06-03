@@ -5,8 +5,7 @@
   <title>
    ALONE FLYER'S LEARNING - Notifications
   </title>
-  <script src="https://cdn.tailwindcss.com">
-  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;family=Roboto+Slab&amp;display=swap" rel="stylesheet"/>
   <style>
@@ -86,8 +85,7 @@
     </h1>
    </div>
    <button aria-label="Open admin login panel" class="bg-white text-indigo-700 font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-indigo-100 transition flex items-center gap-2" id="adminBtn" title="Admin Login">
-    <i class="fas fa-user-shield">
-    </i>
+    <i class="fas fa-user-shield"></i>
     Admin
    </button>
   </header>
@@ -108,8 +106,7 @@
   <div aria-labelledby="adminModalTitle" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50" id="adminModal" role="dialog">
    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-8 relative max-h-[90vh] overflow-y-auto">
     <button aria-label="Close admin modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded" id="closeAdminModal">
-     <i class="fas fa-times text-2xl">
-     </i>
+     <i class="fas fa-times text-2xl"></i>
     </button>
     <h2 class="text-3xl font-semibold mb-6 text-indigo-700 text-center select-none" id="adminModalTitle">
      Admin Panel
@@ -120,8 +117,7 @@
      </label>
      <input aria-describedby="loginError" autocomplete="off" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition" id="adminPassword" placeholder="Password" type="password"/>
      <button class="w-full bg-indigo-700 text-white py-3 rounded-lg hover:bg-indigo-800 transition font-semibold flex justify-center items-center gap-3" id="loginBtn" type="button">
-      <i class="fas fa-sign-in-alt">
-      </i>
+      <i class="fas fa-sign-in-alt"></i>
       Login
      </button>
      <p class="text-red-600 mt-2 text-center font-medium hidden select-none" id="loginError" role="alert">
@@ -145,24 +141,25 @@
       <input aria-label="Upload image file for notification" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition cursor-pointer" id="imageFile" name="imageFile" type="file" />
       <div class="flex justify-between items-center">
        <button class="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition font-semibold flex items-center gap-3" id="publishBtn" type="submit">
-        <i class="fas fa-upload">
-        </i>
+        <i class="fas fa-upload"></i>
         Publish
        </button>
        <button class="bg-gray-600 text-white px-5 py-3 rounded-lg hover:bg-gray-700 transition font-semibold flex items-center gap-3 hidden" id="updateBtn" type="submit">
-        <i class="fas fa-edit">
-        </i>
+        <i class="fas fa-edit"></i>
         Update
        </button>
        <button class="bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700 transition font-semibold flex items-center gap-3" id="logoutBtn" type="button">
-        <i class="fas fa-sign-out-alt">
-        </i>
+        <i class="fas fa-sign-out-alt"></i>
         Logout
        </button>
       </div>
      </form>
      <section aria-label="List of notifications for editing" class="mt-8 max-h-72 overflow-y-auto border border-gray-300 rounded-lg p-4 bg-indigo-50 shadow-inner" id="adminNotificationsList">
       <!-- Admin notifications list -->
+     </section>
+     <section class="mt-6 text-center text-sm text-gray-500 select-none">
+      <p><strong>Note:</strong> To permanently save notifications to this HTML file, copy the updated notifications JSON below and replace the <code>window.INITIAL_NOTIFICATIONS</code> array in the HTML source.</p>
+      <textarea readonly id="notificationsJson" class="mt-2 w-full h-32 p-2 border border-gray-300 rounded-lg font-mono text-xs bg-gray-100" aria-label="Notifications JSON for manual saving"></textarea>
      </section>
     </div>
    </div>
@@ -191,6 +188,18 @@
       const notificationForm = document.getElementById('notificationForm');
       const notificationIdInput = document.getElementById('notificationId');
       const adminNotificationsList = document.getElementById('adminNotificationsList');
+      const notificationsJsonTextarea = document.getElementById('notificationsJson');
+
+      // Initial notifications embedded in HTML for permanent storage
+      window.INITIAL_NOTIFICATIONS = window.INITIAL_NOTIFICATIONS || [];
+
+      // Use localStorage to cache notifications for faster load and editing
+      // On first load, if localStorage empty, initialize from INITIAL_NOTIFICATIONS
+      function initializeStorage() {
+        if (!localStorage.getItem('coachingNotifications')) {
+          localStorage.setItem('coachingNotifications', JSON.stringify(window.INITIAL_NOTIFICATIONS));
+        }
+      }
 
       // Load notifications from localStorage or initialize empty array
       function loadNotifications() {
@@ -206,6 +215,13 @@
       // Save notifications array to localStorage
       function saveNotifications(notifications) {
         localStorage.setItem('coachingNotifications', JSON.stringify(notifications));
+        updateNotificationsJson(notifications);
+      }
+
+      // Update the JSON textarea with current notifications for manual saving
+      function updateNotificationsJson(notifications) {
+        if (!notificationsJsonTextarea) return;
+        notificationsJsonTextarea.value = JSON.stringify(notifications, null, 2);
       }
 
       // Escape HTML to prevent injection
@@ -230,7 +246,7 @@
         notifications
           .slice()
           .reverse()
-          .forEach((note, i) => {
+          .forEach((note) => {
             const noteEl = document.createElement('article');
             noteEl.className =
               'bg-indigo-50 border border-indigo-300 p-5 rounded-lg shadow-sm hover:shadow-lg transition cursor-default select-text notification-animate';
@@ -533,9 +549,23 @@
         }
       });
 
+      // Initialize localStorage from embedded notifications if empty
+      initializeStorage();
+      // Update JSON textarea with current notifications on load
+      updateNotificationsJson(loadNotifications());
       // Initial render
       renderNotifications();
     })();
+  </script>
+  <script>
+    // Embedded notifications data for permanent storage in HTML
+    window.INITIAL_NOTIFICATIONS = [
+      {
+        "text": "Welcome to ALONE FLYER'S LEARNING! Stay tuned for latest updates.",
+        "imageUrl": "",
+        "date": "2024-06-01T08:00:00.000Z"
+      }
+    ];
   </script>
  </body>
 </html>
